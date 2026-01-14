@@ -4,99 +4,88 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Danh sách sinh viên</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>Document</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
 </head>
 <body>
+<div class="container">
+<form action="" method="post" enctype="multipart/form-data">
+<h1 align="center">Them sinh vien</h1>
+    <table class="table table-hover">
+        <tr>
+            <td><label for="">Nhap ho sinh vien:</label></td>
+            <td><input type="text" name="txtHo"></td>
+            <td><label for="">Nhap ten sinh vien:</label></td>
+            <td><input type="text" name="txtTen"></td>
+        </tr>
+        <tr>
+            <td><label for="">Nhap ngay sinh:</label></td>
+            <td><input type="date" name="dtNS"></td>
+            <td><label for="">Nhap gioi tinh:</label></td>
+            <td><input type="radio" name="ckGT" value="1">Nam<input type="radio" name="ckGT" value="0">Nu</td>
+            <td><label for="">Nhap ma lop:</label></td>
+            <td><input type="text" name="txtMaLop"></td>
+        </tr>
+        <tr>
+            <th><input type="submit" name="btnThem" value="Them"></th>
+        </tr>
+    </table>
+    <?php
+    $CSDL = new mysqli('localhost','root','','db_s5thud2') or die('KT');
+        if(isset($_POST["btnThem"]))
+        {
+            $Ho = $_POST["txtHo"];
+            $Ten = $_POST["txtTen"];
+            $DS = $_POST["dtNS"];
+            if($_POST["ckGT"])
+            {
+                $GT = $_POST["ckGT"];
+            }
+            else
+            {
+                $GT = 0;
+            }
+            $MaLop = $_POST["txtMaLop"];
 
-<div class="container mt-5">
-    <form action="" method="post">
-        <h3>Thêm sinh viên mới</h3>
-        <div class="row g-3 mb-4">
-            <div class="col-md-4">
-                <label class="form-label">Họ sinh viên</label>
-                <input type="text" name="txtHo" class="form-control" required>
-            </div>
-            <div class="col-md-4">
-                <label class="form-label">Tên sinh viên</label>
-                <input type="text" name="txtTen" class="form-control" required>
-            </div>
-            <div class="col-md-4">
-                <label class="form-label">Giới tính</label><br>
-                <input type="radio" name="rdGT" VALUES="1" checked> Nam 
-                <input type="radio" name="rdGT" VALUES="0"> Nữ
-            </div>   
-            <div class="col-md-4">
-                <label class="form-label">Nhập mã lớp</label>
-                <input type="text" name="txtMaLop" class="form-control" required>
-            </div>
-            <div class="col-md-4">
-                <label class="form-label">Nhập ngày sinh</label>
-                <input type="date" name="dtNS" class="form-control" required>
-            </div>
-            <div class="col-12">
-                <button type="submit" name="btnThem" class="btn btn-primary">Thêm mới</button>
-            </div>
-        </div>
+            mysqli_query($CSDL,"Insert into tb_sv(HoSV,TenSV,NgaySInh,GT,MaLop) values('$Ho','$Ten','$DS',$GT,'$MaLop')") or die('KT');
+        header("location:on.php");
+        }
+    ?>
+    <h1 align="center">Danh sach sinh vien </h1>
+    <table class="table table-hover">
+        <tr>
+            <th>Ma sinh vien</th>
+            <th>Ho sinh vien</th>
+            <th>Ten sinh vien</th>
+            <th>Ngay sinh</th>
+            <th>Gioi tinh</th>
+            <th>Ma lop</th>
+            <th>Chuc nang</th>
+        </tr>
 
-        <hr>
-        <h1 class="mb-4">Danh sách sinh viên</h1>
-        <table class="table table-hover table-bordered text-center">
-            <thead class="table-dark">
-                <tr>
-                    <th>Mã sinh viên</th>
-                    <th>Họ sinh viên</th>
-                    <th>Tên sinh viên</th>
-                    <th>Ngày sinh</th>
-                    <th>Giới tính</th>
-                    <th>Mã lớp</th>
-                    <th>Chức năng</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php
-                $a = new mysqli("localhost", 'root', '', 'db_lop') or die('Kết nối thất bại');
-                mysqli_query($a, "SET NAMES UTF8");
+        <?php
+        $BangSV = mysqli_query($CSDL,'Select * from tb_sv');
+query( $CSDL"SET NAMES utf8");   
 
-                if (isset($_POST['btnThem'])) {
-                    $Ho = $_POST['txtHo'];
-                    $Ten = $_POST['txtTen'];
-                    $NgaySinh = $_POST['dtNS']; 
-                    $GT = isset($_POST['rdGT']) ? $_POST['rdGT'] : 0;
-                    $MaLop = $_POST['txtMaLop'];
-
-                    $LenhChen = "INSERT INTO tb_sv (HoSV, TenSV, NgaySinh, GT, MaLop) 
-                                 VALUES ('$Ho', '$Ten', '$NgaySinh', '$GT', '$MaLop')";
-                    
-                    if (mysqli_query($a, $LenhChen)) {
-                    } else {
-                        echo "<div class='alert alert-danger'>Lỗi: " . mysqli_error($a) . "</div>";
-                    }
-                }
-
-                $BangSV = mysqli_query($a, "SELECT * FROM tb_sv");
-                if (mysqli_num_rows($BangSV) > 0) {
-                    while ($hang = mysqli_fetch_assoc($BangSV)) {
-                        echo "<tr>";
-                        echo "<td>" . $hang['MaSV'] . "</td>";
-                        echo "<td>" . $hang['HoSV'] . "</td>";
-                        echo "<td>" . $hang['TenSV'] . "</td>";
-                        echo "<td>" . $hang['NgaySInh'] . "</td>";
-                        echo "<td>" . ($hang['GT'] == 1 ? "Nam" : "Nữ") . "</td>";
-                        echo "<td>" . $hang['MaLop'] . "</td>";
-                        echo "<td>
-                                <a href='#' class='btn btn-sm btn-warning'>Sửa</a>
-                                <a href='#' class='btn btn-sm btn-danger'>Xóa</a>
-                              </td>";
-                        echo "</tr>"; 
-                    }
-                } else {
-                    echo "<tr><td colspan='7'>Không có dữ liệu</td></tr>";
-                }
-                ?>
-            </tbody>
-        </table>
-    </form>
+        if(mysqli_num_rows($BangSV) > 0)
+            
+        {
+            while($hang = mysqli_fetch_assoc($BangSV))
+            {
+                echo "<tr>";
+                echo ("<td>".$hang['MaSV']."</td>");
+                echo ("<td>".$hang['HoSV']."</td>");
+                echo ("<td>".$hang['TenSV']."</td>");
+                echo ("<td>".$hang['NgaySInh']."</td>");
+                echo ("<td>".$hang['GT']."</td>");
+                echo ("<td>".$hang['MaLop']."</td>");
+                echo ("<td><button type='button' class='btn btn-danger'>Xoa</button> <button type='button' class='btn btn-primary'>Sua</button></td>");
+                echo "<tr>";
+            }
+        }
+    ?>
+    </table>
+</form>
 </div>
 </body>
 </html>
